@@ -1,17 +1,23 @@
-<h4>Liste des tâches</h4>
-<app-loading-spinner></app-loading-spinner>
-<ul>
-    <p>En retard <span> {{ lateTasks.length }}</span></p>
-    <li *ngFor="let lateTask of lateTasks">
-        <a>
-          <span>{{lateTask.name}}</span> {{lateTask.deadline}}
-        </a>
+<div class="container">
+  <h1>Liste des tâches</h1>
+  <app-loading-spinner></app-loading-spinner>
+  <ul>
+    <div class="sub-title-container">
+      <h2 class="late-title">En retard</h2><div class="late-puck"><span>{{ lateTasks.length }}</span></div>
+    </div>
+    <hr>
+    <li *ngFor="let lateTask of lateTasks"> 
+      <a><span>{{lateTask.name}}</span> <span class="deadlines late-dates">{{lateTask.deadline}}</span></a>
+      <hr>  
     </li>
     <br>
-    <p>À venir <span> {{ upcomingTasks.length }}</span></p>
+    <div class="sub-title-container">
+      <h2>À venir </h2><div span class="upcoming-puck"><span>{{ upcomingTasks.length }}</span></div>
+    </div>
+    <hr>
     <li *ngFor="let upcomingTask of upcomingTasks">
-        <a>
-          <span>{{upcomingTask.name}}</span> {{upcomingTask.deadline}}
-        </a>
+      <a><span>{{upcomingTask.name}}</span> <span class="deadlines">{{upcomingTask.deadline}}</span></a>
+      <hr> 
     </li>
-</ul>
+  </ul>
+</div>

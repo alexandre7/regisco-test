@@ -6,7 +6,7 @@ import { ComponentModule } from './components/component.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NetworkInterceptor } from './network.interceptor';
+import { NetworkInterceptor } from './interceptor/network.interceptor';
 
 
 @NgModule({

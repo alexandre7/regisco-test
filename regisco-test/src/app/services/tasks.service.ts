@@ -14,6 +14,8 @@ export class TasksService {
 
   private tasksUrl = 'https://api-dev.regisco.ca/api/interview-tasks';  // URL to web api
 
+  private yesterdaydate = new Date();
+
   public tasks: Tasks[] = [];
 
   public incompletedTasks: Tasks[] = [];
@@ -32,14 +34,45 @@ export class TasksService {
       )
     };
 
+    /** Transform the date into a string For Yesterday and Today */
+    public changeSpecificDates(task: Tasks){
+      // console.log(task);
+
+      const today = new Date();
+
+      this.yesterdaydate.setDate(this.yesterdaydate .getDate() - 1);
+    
+      // console.log(yesterdaydate);
+
+      // let myInt = Number(new Date(yesterdaydate));
+      // console.log(myInt);
+
+      let date = Date.parse(task.deadline);
+      let yesterdayssdate = Number(new Date(this.yesterdaydate));
+
+  
+      // console.log(date);
+      // if(date === today){
+      //   task.deadline = "Aujour'hui";
+      // }
+      if(date === yesterdayssdate){
+        console.log('allo')
+        task.deadline = "Hier";
+      }
+    };
+
     /** Subscribe to getTask and create two lists
      * One is the late task
      * The other is the upcoming tasks
      */
     public manageTasks(){
-      const currentDate = Date.now();
-  
-       this.getTasks().subscribe(tasks => {
+      
+      this.yesterdaydate.setDate(this.yesterdaydate .getDate() - 1);
+
+      let yesterdaydateNumber = Number(new Date(this.yesterdaydate));
+      // console.log(yesterdaydateNumber);
+
+      this.getTasks().subscribe(tasks => {
         this.tasks = tasks;
         
         tasks.forEach(task => {
@@ -47,20 +80,25 @@ export class TasksService {
             this.incompletedTasks.push(task as any);
           }
         });
-        
-        this.incompletedTasks.forEach(incompleteTask => {
-          const date = Date.parse(incompleteTask.deadline);
 
-          if(date < currentDate){
-            this.lateTasks.push(incompleteTask);
-          }
-          else{
-            this.upcomingTasks.push(incompleteTask);
-          }
+        this.incompletedTasks.forEach(incompleteTask => {
+         
+        const date = Date.parse(incompleteTask.deadline);
+
+        if(date > yesterdaydateNumber){
+          console.log(date)
+          this.upcomingTasks.push(incompleteTask);
+          this.changeSpecificDates(incompleteTask);
+        }
+        else{
+          this.lateTasks.push(incompleteTask);
+          this.changeSpecificDates(incompleteTask);
+        }
+        
         });
         
-        this.orderTasks();
-       }); 
+        // this.orderTasks();
+      }); 
     }
 
     /** Order the two lists : late and upcoming tasks in order as ask in the test description */
@@ -75,7 +113,7 @@ export class TasksService {
 
       latetasksDeadlines.sort();
 
-      //ICITTE
+      //ICITTE POUR METTRE EN ORDRE
       latetasksDeadlines.forEach(latetaskDeadline => {
       this.lateTasks.forEach(lateTask => {
         if(lateTask.deadline === latetaskDeadline){
@@ -85,8 +123,7 @@ export class TasksService {
  
       });
       
-      console.log(lateTasksOrdered);
-  
+      // console.log(lateTasksOrdered);
     };
 
     private handleError<T>(operation = 'operation', result?: T) {

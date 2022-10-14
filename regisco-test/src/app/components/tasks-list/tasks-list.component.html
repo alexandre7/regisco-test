@@ -1,18 +1,17 @@
 <h4>Liste des tâches</h4>
 
 <ul>
-    <p>En retard</p>
+    <p>En retard <span> {{ lateTasks.length }}</span></p>
     <li *ngFor="let lateTask of lateTasks">
         <a>
           <span>{{lateTask.name}}</span> {{lateTask.deadline}}
         </a>
     </li>
     <br>
-    <p>À venir</p>
+    <p>À venir <span> {{ upcomingTasks.length }}</span></p>
     <li *ngFor="let upcomingTask of upcomingTasks">
         <a>
           <span>{{upcomingTask.name}}</span> {{upcomingTask.deadline}}
         </a>
     </li>
-
 </ul>

@@ -29,9 +29,13 @@ export class TasksService {
       return this.http.get<Tasks[]>(this.tasksUrl, this.httpOptions)
       .pipe(
         catchError(this.handleError<Tasks[]>('getHeroes', []))
-      );
-    }
+      )
+    };
 
+    /** Subscribe to getTask and create two lists
+     * One is the late task
+     * The other is the upcoming tasks
+     */
     public manageTasks(){
       const currentDate = Date.now();
   
@@ -53,9 +57,37 @@ export class TasksService {
           else{
             this.upcomingTasks.push(incompleteTask);
           }
-        })
+        });
+        
+        this.orderTasks();
        }); 
     }
+
+    /** Order the two lists : late and upcoming tasks in order as ask in the test description */
+    public orderTasks(){
+      const latetasksDeadlines: string[] = [];
+      const lateTasksOrdered: Tasks[] = [];
+
+
+      this.lateTasks.forEach(lateTask => {
+        latetasksDeadlines.push(lateTask.deadline);
+      });
+
+      latetasksDeadlines.sort();
+
+      //ICITTE
+      latetasksDeadlines.forEach(latetaskDeadline => {
+      this.lateTasks.forEach(lateTask => {
+        if(lateTask.deadline === latetaskDeadline){
+          lateTasksOrdered.push(lateTask);
+        }
+      });
+ 
+      });
+      
+      console.log(lateTasksOrdered);
+  
+    };
 
     private handleError<T>(operation = 'operation', result?: T) {
       return (error: any): Observable<T> => {
@@ -69,7 +101,5 @@ export class TasksService {
         return of(result as T);
       };
     }
-
 }
-
 

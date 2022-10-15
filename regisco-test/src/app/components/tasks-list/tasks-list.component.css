@@ -82,3 +82,12 @@ hr{
   text-align: center;
   font: 32px Arial, sans-serif;
 }
+
+label{
+  font-size: 20px;
+}
+
+input{
+  margin-top: 5px;
+  margin-bottom: 50px;
+}

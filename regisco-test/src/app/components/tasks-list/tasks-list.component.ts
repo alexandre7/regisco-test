@@ -14,11 +14,31 @@ export class TasksListComponent implements OnInit {
 
   public upcomingTasks: Tasks[] = [];
 
+  public tasks: any[] = [];
+
+  public filteredTasks: any[]= [];
+
+  public filterBy:any;
+
+  public filterTaskDisplay: boolean = false;
+  
   constructor(private tasksService: TasksService, public errorMessageService: ErrorMessageService) { }
 
   ngOnInit(): void { 
     this.tasksService.manageTasks();
     this.lateTasks = this.tasksService.lateTasks;
     this.upcomingTasks = this.tasksService.upcomingTasks;
+    this.tasks = this.tasksService.incompletedTasks;
+  }
+
+  filter() {
+    // console.log(this.filteredTasks);
+    this.filteredTasks = [...this.tasks.filter(task => task.name.includes(this.filterBy))];
+    if(this.filteredTasks.length > 0){
+      this.filterTaskDisplay = true;
+    }
+    if(this.filterBy === ''){
+      this.filterTaskDisplay = false;
+    }
   }
 }

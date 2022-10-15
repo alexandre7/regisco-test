@@ -1,6 +1,14 @@
 <div class="container">
-  <div *ngIf="!errorMessageService.message.length">
-    <h1>Liste des tâches</h1>
+
+  <div class="form-group w-25">
+    <label for="ex2">Filtrer les tâches</label>
+    <input type="text" [(ngModel)]="filterBy" placeholder="Entrer une tâche par son nom" (keyup)="filter()" class="form-control" aria-label="Default">
+  </div>
+  <br>
+
+  <h1>Liste des tâches</h1>
+
+  <div *ngIf="!errorMessageService.message.length && !filterTaskDisplay">
     <app-loading-spinner></app-loading-spinner>
     <ul>
       <div class="sub-title-container">
@@ -22,7 +30,18 @@
       </li>
     </ul>
   </div>
+
+  <div *ngIf="filterTaskDisplay">
+    <ul>
+      <hr>
+      <li *ngFor="let task of filteredTasks">
+        <a><span>{{task.name}}</span> <span class="deadlines">{{task.deadline}}</span></a>
+        <hr>
+      </li>
+    </ul>
+  </div>
 </div>
+
 <div *ngIf="errorMessageService.message.length">
   <app-error-message></app-error-message>
 </div>

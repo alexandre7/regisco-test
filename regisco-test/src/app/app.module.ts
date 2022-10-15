@@ -8,7 +8,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NetworkInterceptor } from './interceptor/network.interceptor';
 
-
 @NgModule({
   declarations: [
     AppComponent,

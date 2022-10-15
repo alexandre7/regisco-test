@@ -1,7 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
+import { DATA_URL } from 'src/environments/dataUrl';
 import { Tasks } from '../model/task';
+import { ErrorMessageService } from './error-message.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,7 @@ export class TasksService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  private tasksUrl = 'https://api-dev.regisco.ca/api/interview-tasks';  // URL to web api
+  private tasksUrl = DATA_URL;  // URL to web api
 
   private yesterdaydate = new Date();
 
@@ -24,20 +26,21 @@ export class TasksService {
 
   public upcomingTasks: Tasks[] = [];
 
-  constructor( private http: HttpClient) { }
+  public dateTaskOrdered: Map<string, string> = new Map([]);
+
+  constructor(private http: HttpClient, private errorMessageService: ErrorMessageService) { }
 
     /** GET tasks from the server */
     getTasks(): Observable<Tasks[]> {
       return this.http.get<Tasks[]>(this.tasksUrl, this.httpOptions)
       .pipe(
+      
         catchError(this.handleError<Tasks[]>('getHeroes', []))
       )
     };
 
     /** Transform the date into a string For Yesterday and Today */
     public changeSpecificDates(task: Tasks){
-      // console.log(task);
-
       const today = new Date();
 
       this.yesterdaydate.setDate(this.yesterdaydate .getDate() - 1);
@@ -56,7 +59,7 @@ export class TasksService {
       //   task.deadline = "Aujour'hui";
       // }
       if(date === yesterdayssdate){
-        console.log('allo')
+        // console.log('allo')
         task.deadline = "Hier";
       }
     };
@@ -73,8 +76,6 @@ export class TasksService {
       // console.log(yesterdaydateNumber);
 
       this.getTasks().subscribe(tasks => {
-        this.tasks = tasks;
-        
         tasks.forEach(task => {
           if(task.completedAt === null){
             this.incompletedTasks.push(task as any);
@@ -86,18 +87,24 @@ export class TasksService {
         const date = Date.parse(incompleteTask.deadline);
 
         if(date > yesterdaydateNumber){
-          console.log(date)
+        
           this.upcomingTasks.push(incompleteTask);
-          this.changeSpecificDates(incompleteTask);
+          // this.changeSpecificDates(incompleteTask);
         }
         else{
           this.lateTasks.push(incompleteTask);
-          this.changeSpecificDates(incompleteTask);
+          // console.log('hello');
+          
+          this.dateTaskOrdered.set(incompleteTask.deadline, incompleteTask.name);
+          //  console.log(this.dateTaskOrdered);
+          
+          // this.changeSpecificDates(incompleteTask);
         }
-        
+      
         });
+
         
-        // this.orderTasks();
+        // this.dateTaskOrdered.sort()
       }); 
     }
 
@@ -105,36 +112,41 @@ export class TasksService {
     public orderTasks(){
       const latetasksDeadlines: string[] = [];
       const lateTasksOrdered: Tasks[] = [];
+      
+   
 
+  
 
-      this.lateTasks.forEach(lateTask => {
-        latetasksDeadlines.push(lateTask.deadline);
-      });
-
+  
       latetasksDeadlines.sort();
 
-      //ICITTE POUR METTRE EN ORDRE
-      latetasksDeadlines.forEach(latetaskDeadline => {
-      this.lateTasks.forEach(lateTask => {
-        if(lateTask.deadline === latetaskDeadline){
-          lateTasksOrdered.push(lateTask);
-        }
-      });
+
+      // this.lateTasks.forEach(lateTask => {
+      //   latetasksDeadlines.forEach(latetaskDeadline => {
+    
+      //     if(lateTask.deadline === latetaskDeadline){
+      //       lateTasksOrdered.push(lateTask);
+      //     }
  
-      });
-      
+      //   });
+       
+      // });
+
       // console.log(lateTasksOrdered);
+      
+
+      
+      // ICITTE POUR METTRE EN ORDRE
     };
 
     private handleError<T>(operation = 'operation', result?: T) {
       return (error: any): Observable<T> => {
     
-        // TODO: send the error to remote logging infrastructure
+        // console for the programmer or for user using console
         console.error(error); // log to console instead
     
-        // TODO: better job of transforming error for user consumption
-      
-        // Let the app keep running by returning an empty result.
+        this.errorMessageService.displayErrorMessage(`${operation} failed: ${error.message}`);
+        
         return of(result as T);
       };
     }

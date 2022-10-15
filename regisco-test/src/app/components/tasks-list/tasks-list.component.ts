@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Tasks } from 'src/app/model/task';
+import { ErrorMessageService } from 'src/app/services/error-message.service';
 import { TasksService } from 'src/app/services/tasks.service';
 
 @Component({
@@ -13,7 +14,7 @@ export class TasksListComponent implements OnInit {
 
   public upcomingTasks: Tasks[] = [];
 
-  constructor(private tasksService: TasksService) { }
+  constructor(private tasksService: TasksService, public errorMessageService: ErrorMessageService) { }
 
   ngOnInit(): void { 
     this.tasksService.manageTasks();

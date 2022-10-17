@@ -1,0 +1,13 @@
+.center {
+  text-align: center;
+}
+
+p {
+  font-size: 20px;
+  color: red;
+  font-weight: 500;
+}
+
+p span {
+  font-weight: normal;
+}

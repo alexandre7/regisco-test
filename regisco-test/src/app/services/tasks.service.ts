@@ -1,6 +1,7 @@
+import { formatDate } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { DATA_URL } from 'src/environments/dataUrl';
 import { Tasks } from '../model/task';
 import { ErrorMessageService } from './error-message.service';
@@ -8,8 +9,8 @@ import { ErrorMessageService } from './error-message.service';
 @Injectable({
   providedIn: 'root'
 })
-export class TasksService {
 
+export class TasksService {
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
@@ -26,129 +27,95 @@ export class TasksService {
 
   public upcomingTasks: Tasks[] = [];
 
-  public dateTaskOrdered: Map<string, string> = new Map([]);
+  constructor( private http: HttpClient, private errorMessageService: ErrorMessageService) { }
 
-  constructor(private http: HttpClient, private errorMessageService: ErrorMessageService) { }
+  /** GET tasks from the server */ 
+  getTasks(): Observable<Tasks[]> {
+    return this.http.get<Tasks[]>(this.tasksUrl, this.httpOptions)
+    .pipe(
+      catchError(this.handleError<Tasks[]>('getHeroes', [])) // Is this something from Heros app?
+    )
+  };
 
-    /** GET tasks from the server */
-    getTasks(): Observable<Tasks[]> {
-      return this.http.get<Tasks[]>(this.tasksUrl, this.httpOptions)
-      .pipe(
-      
-        catchError(this.handleError<Tasks[]>('getHeroes', []))
-      )
-    };
+  /** Subscribe to getTask and create two lists 
+     * Gather the incomplete tasks
+     * Sorting them in upcoming tasks and late tasks
+     * Transform the date into a string For Yesterday and Today
+  */
+  public manageTasks(){
+    this.yesterdaydate.setDate(this.yesterdaydate.getDate() - 1);
 
-    /** Transform the date into a string For Yesterday and Today */
-    public changeSpecificDates(task: Tasks){
-      const today = new Date();
+    const yesterdaydateNumber = Number(new Date(this.yesterdaydate));
 
-      this.yesterdaydate.setDate(this.yesterdaydate .getDate() - 1);
-    
-      // console.log(yesterdaydate);
+    let today = new Date();
 
-      // let myInt = Number(new Date(yesterdaydate));
-      // console.log(myInt);
+    const todaydateNumber = Number(new Date(today));
 
-      let date = Date.parse(task.deadline);
-      let yesterdayssdate = Number(new Date(this.yesterdaydate));
+    // 1. Gather the incomplete tasks
+    this.getTasks().subscribe(tasks => {
+      tasks.forEach(task => {
 
-  
-      // console.log(date);
-      // if(date === today){
-      //   task.deadline = "Aujour'hui";
-      // }
-      if(date === yesterdayssdate){
-        // console.log('allo')
-        task.deadline = "Hier";
-      }
-    };
+        if(task.completedAt === null){
+          this.incompletedTasks.push(task as any);
+        }
+      });
 
-    /** Subscribe to getTask and create two lists
-     * One is the late task
-     * The other is the upcoming tasks
-     */
-    public manageTasks(){
-      
-      this.yesterdaydate.setDate(this.yesterdaydate .getDate() - 1);
+      // 2. Sorting them in upcoming tasks and late tasks
+      this.incompletedTasks.forEach(incompleteTask => {
+          const date = Date.parse(incompleteTask.deadline);
 
-      let yesterdaydateNumber = Number(new Date(this.yesterdaydate));
-      // console.log(yesterdaydateNumber);
+          if(date > yesterdaydateNumber){
+            this.upcomingTasks.push(incompleteTask);
 
-      this.getTasks().subscribe(tasks => {
-        tasks.forEach(task => {
-          if(task.completedAt === null){
-            this.incompletedTasks.push(task as any);
+          } else{
+            this.lateTasks.push(incompleteTask);
           }
-        });
+      });
 
-        this.incompletedTasks.forEach(incompleteTask => {
-         
-        const date = Date.parse(incompleteTask.deadline);
+      this.sortLateTasks(this.lateTasks);
+      this.sortLateTasks(this.upcomingTasks);
 
-        if(date > yesterdaydateNumber){
-        
-          this.upcomingTasks.push(incompleteTask);
-          // this.changeSpecificDates(incompleteTask);
+      // 3. Transform the date into a string For Yesterday and Today
+      this.lateTasks.forEach(task => {
+        if(task.deadline === formatDate(yesterdaydateNumber ,'yyyy-MM-dd', 'en-US')){
+          task.deadline = "Hier";
         }
-        else{
-          this.lateTasks.push(incompleteTask);
-          // console.log('hello');
-          
-          this.dateTaskOrdered.set(incompleteTask.deadline, incompleteTask.name);
-          //  console.log(this.dateTaskOrdered);
-          
-          // this.changeSpecificDates(incompleteTask);
+      });
+
+      this.upcomingTasks.forEach(task => {
+        if(task.deadline === formatDate(todaydateNumber ,'yyyy-MM-dd', 'en-US')){
+          task.deadline = "Aujourd'hui";
         }
-      
-        });
+      });
+    });
+  }
 
-        
-        // this.dateTaskOrdered.sort()
-      }); 
-    }
+  /** Order the tasks */
+  public sortLateTasks(tasks: Tasks[]){
+    tasks.sort((a, b) => {
+      const deadlineA = a.deadline;
+      const deadlineB = b.deadline;
 
-    /** Order the two lists : late and upcoming tasks in order as ask in the test description */
-    public orderTasks(){
-      const latetasksDeadlines: string[] = [];
-      const lateTasksOrdered: Tasks[] = [];
-      
-   
+        if (deadlineA < deadlineB) {
+          return -1;
+        }
 
+        if (deadlineA > deadlineB) {
+          return 1;
+        }
+        return 0;
+    });
+  };
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
   
-
+      // console for the programmer or for user using console
+      console.error(error); 
   
-      latetasksDeadlines.sort();
-
-
-      // this.lateTasks.forEach(lateTask => {
-      //   latetasksDeadlines.forEach(latetaskDeadline => {
-    
-      //     if(lateTask.deadline === latetaskDeadline){
-      //       lateTasksOrdered.push(lateTask);
-      //     }
- 
-      //   });
-       
-      // });
-
-      // console.log(lateTasksOrdered);
+      this.errorMessageService.displayErrorMessage(`${operation} failed: ${error.message}`);
       
-
-      
-      // ICITTE POUR METTRE EN ORDRE
+      return of(result as T);
     };
-
-    private handleError<T>(operation = 'operation', result?: T) {
-      return (error: any): Observable<T> => {
-    
-        // console for the programmer or for user using console
-        console.error(error); // log to console instead
-    
-        this.errorMessageService.displayErrorMessage(`${operation} failed: ${error.message}`);
-        
-        return of(result as T);
-      };
-    }
+  }
 }
-

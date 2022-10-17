@@ -26,6 +26,7 @@ export class TasksListComponent implements OnInit {
 
   ngOnInit(): void { 
     this.tasksService.manageTasks();
+    
     this.lateTasks = this.tasksService.lateTasks;
     this.upcomingTasks = this.tasksService.upcomingTasks;
     this.tasks = this.tasksService.incompletedTasks;
@@ -34,6 +35,7 @@ export class TasksListComponent implements OnInit {
   filter() {
     // console.log(this.filteredTasks);
     this.filteredTasks = [...this.tasks.filter(task => task.name.includes(this.filterBy))];
+
     if(this.filteredTasks.length > 0){
       this.filterTaskDisplay = true;
     }

@@ -10,6 +10,11 @@ You must be in the regisco-test folder before running the application. So be sur
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
+## Deployment on firebase server
+
+Run firebase hosting:channel:deploy preview_name. Then, open the hosting:channel which should be: https://regisco-test--preview-name-h263ycgn.web.app
+\*\*\*Notes than the deployment is done but cant display the list of tasks, so no connection with the API for now.
+
 # TSLint
 
 Run the command ng lint to run the lint tests in the project

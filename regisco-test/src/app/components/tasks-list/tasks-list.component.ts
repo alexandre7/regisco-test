@@ -6,27 +6,29 @@ import { TasksService } from 'src/app/services/tasks.service';
 @Component({
   selector: 'app-tasks-list',
   templateUrl: './tasks-list.component.html',
-  styleUrls: ['./tasks-list.component.css']
+  styleUrls: ['./tasks-list.component.css'],
 })
 export class TasksListComponent implements OnInit {
-
   public lateTasks: Tasks[] = [];
 
   public upcomingTasks: Tasks[] = [];
 
   public tasks: any[] = [];
 
-  public filteredTasks: any[]= [];
+  public filteredTasks: any[] = [];
 
-  public filterBy:any;
+  public filterBy: any;
 
   public filterTaskDisplay: boolean = false;
-  
-  constructor(private tasksService: TasksService, public errorMessageService: ErrorMessageService) { }
 
-  ngOnInit(): void { 
+  constructor(
+    private tasksService: TasksService,
+    public errorMessageService: ErrorMessageService
+  ) {}
+
+  ngOnInit(): void {
     this.tasksService.manageTasks();
-    
+
     this.lateTasks = this.tasksService.lateTasks;
     this.upcomingTasks = this.tasksService.upcomingTasks;
     this.tasks = this.tasksService.incompletedTasks;
@@ -34,12 +36,14 @@ export class TasksListComponent implements OnInit {
 
   filter() {
     // console.log(this.filteredTasks);
-    this.filteredTasks = [...this.tasks.filter(task => task.name.includes(this.filterBy))];
+    this.filteredTasks = [
+      ...this.tasks.filter((task) => task.name.includes(this.filterBy)),
+    ];
 
-    if(this.filteredTasks.length > 0){
+    if (this.filteredTasks.length > 0) {
       this.filterTaskDisplay = true;
     }
-    if(this.filterBy === ''){
+    if (this.filterBy === '') {
       this.filterTaskDisplay = false;
     }
   }

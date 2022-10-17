@@ -9,23 +9,17 @@ import { TasksListComponent } from './tasks-list/tasks-list.component';
 
 @NgModule({
   declarations: [
-    LoadingSpinnerComponent, 
+    LoadingSpinnerComponent,
     ErrorMessageComponent,
-    TasksListComponent
+    TasksListComponent,
   ],
   imports: [
     CommonModule,
     FormsModule,
     HttpClientModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
-  exports: [
-    LoadingSpinnerComponent, 
-    ErrorMessageComponent,
-    TasksListComponent
-  ],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ],
+  exports: [LoadingSpinnerComponent, ErrorMessageComponent, TasksListComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class ComponentModule { }
+export class ComponentModule {}

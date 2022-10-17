@@ -1,10 +1,16 @@
 <div class="container">
-
   <div class="form-group w-25">
     <label for="ex2">Filtrer les tâches</label>
-    <input type="text" [(ngModel)]="filterBy" placeholder="Entrer une tâche par son nom" (keyup)="filter()" class="form-control" aria-label="Default">
+    <input
+      type="text"
+      [(ngModel)]="filterBy"
+      placeholder="Entrer une tâche par son nom"
+      (keyup)="filter()"
+      class="form-control"
+      aria-label="Default"
+    />
   </div>
-  <br>
+  <br />
 
   <h1>Liste des tâches</h1>
 
@@ -12,31 +18,46 @@
     <app-loading-spinner></app-loading-spinner>
     <ul>
       <div class="sub-title-container">
-        <h2 class="late-title">En retard</h2><div class="late-puck"><span>{{ lateTasks.length }}</span></div>
+        <h2 class="late-title">En retard</h2>
+        <div class="late-puck">
+          <span>{{ lateTasks.length }}</span>
+        </div>
       </div>
-      <hr>
-      <li *ngFor="let lateTask of lateTasks"> 
-        <a><span>{{lateTask.name}}</span> <span class="deadlines late-dates">{{lateTask.deadline}}</span></a>
-        <hr>  
+      <hr />
+      <li *ngFor="let lateTask of lateTasks">
+        <a
+          ><span>{{ lateTask.name }}</span>
+          <span class="deadlines late-dates">{{ lateTask.deadline }}</span></a
+        >
+        <hr />
       </li>
-      <br>
+      <br />
       <div class="sub-title-container">
-        <h2>À venir </h2><div span class="upcoming-puck"><span>{{ upcomingTasks.length }}</span></div>
+        <h2>À venir</h2>
+        <div span class="upcoming-puck">
+          <span>{{ upcomingTasks.length }}</span>
+        </div>
       </div>
-      <hr>
+      <hr />
       <li *ngFor="let upcomingTask of upcomingTasks">
-        <a><span>{{upcomingTask.name}}</span> <span class="deadlines">{{upcomingTask.deadline}}</span></a>
-        <hr> 
+        <a
+          ><span>{{ upcomingTask.name }}</span>
+          <span class="deadlines">{{ upcomingTask.deadline }}</span></a
+        >
+        <hr />
       </li>
     </ul>
   </div>
 
   <div *ngIf="filterTaskDisplay">
     <ul>
-      <hr>
+      <hr />
       <li *ngFor="let task of filteredTasks">
-        <a><span>{{task.name}}</span> <span class="deadlines">{{task.deadline}}</span></a>
-        <hr>
+        <a
+          ><span>{{ task.name }}</span>
+          <span class="deadlines">{{ task.deadline }}</span></a
+        >
+        <hr />
       </li>
     </ul>
   </div>
